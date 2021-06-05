@@ -1,18 +1,19 @@
 const $arenas = document.querySelector(".arenas"),
   $randomButton = document.querySelector(".button");
 
-const scorpion = {
+const player1 = {
   player: 1,
   name: "Scorpion",
   hp: 100,
-  img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
+  // img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
+  img: './assets/scorpion.gif',
   weapon: ["cunai"],
   attack: function () {
     console.log(`${this.name} Fight...`);
   },
 };
 
-const kitana = {
+const player2 = {
   player: 2,
   name: "Kitana",
   hp: 100,
@@ -62,29 +63,39 @@ function createPlayer({
   return $player;
 }
 
-function winTitle(person) {
+function winTitle() {
   const $winTitle = createElement("div", "loseTitle");
-  $winTitle.textContent = `${person.name} wins`;
-
-  return $winTitle;
-}
-
-function changeHP(person) {
-  const $playerLife = document.querySelector(`.player${person.player} .life`);
-  person.hp -= Math.floor(Math.random() * 20);
-  $playerLife.style.width = `${person.hp}%`;
-  // console.log(person.name + " : " + person.hp);
-
-  if (person.hp < 0) {
-    return person.hp;
+  const $player_1Img = document.querySelector('.player1 .character img');
+  const $player_2Img = document.querySelector('.player2 .character img');
+  if (player1.hp <= 0) {
+    $winTitle.textContent = player2.name + ' wins';
+    $player_2Img.setAttribute('src', './assets/a3.gif');
+  } else if (player2.hp <= 0) {
+    $winTitle.textContent = player1.name + ' wins';
+    $player_1Img.setAttribute('src', './assets/scorpion-wins.gif');
+  } else if (player1.hp <= 0 && player2.hp <= 0) {
+    $winTitle.textContent = 'Draw';
   }
-  return person.hp;
+  $arenas.appendChild($winTitle)
 }
+
+function changeHP(char) {
+  const $playerLife = document.querySelector(`.player${char.player} .life`);
+  char.hp -= Math.ceil(Math.random() * 20);
+  $playerLife.style.width = `${char.hp}%`;
+  if(char.hp <= 0) {
+    $playerLife.style.width = '0%';
+    $randomButton.disabled = true;
+    winTitle()
+  }
+}
+
 
 $randomButton.addEventListener("click", () => {
-  changeHP(kitana);
-  changeHP(scorpion);
+  changeHP(player1);
+  changeHP(player2);
 });
 
-$arenas.appendChild(createPlayer(scorpion));
-$arenas.appendChild(createPlayer(kitana));
+$arenas.appendChild(createPlayer(player1));
+$arenas.appendChild(createPlayer(player2));
+
